@@ -73,7 +73,7 @@ pipeline {
             echo 'Pipeline successful: image scanned and pushed to Docker Hub.'
         }
         failure {
-            echo 'Pipeline failed. Review the console output.'
+            echo 'Pipeline failed.  Review the console output.'
         }
         always {
             echo 'Pipeline execution completed.'
