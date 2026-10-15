@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -8,7 +7,7 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_USER = 'NileshDocker4'
+        DOCKERHUB_USER = 'nileshdocker4'
         IMAGE_NAME = 'nileshdocker4/docker-static-website'
         TRIVY = 'C:\\Tools\\Trivy\\trivy.exe'
     }
@@ -43,16 +42,13 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'Local_Docker_cred',
-                        usernameVariable: 'NileshDocker4',
-                        passwordVariable: 'dckr_pat_UTgf4W6sou6Ilnn0xBicCpbywu'
-                    )
-                ]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'Local_Docker_cred',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_TOKEN'
+                )]) {
                     bat '''
-                        @echo off
-                        echo %DH_TOKEN% | docker login -u %DH_USER% --password-stdin
+                        echo %DOCKER_TOKEN% | docker login -u %DOCKER_USER% --password-stdin
                         if errorlevel 1 exit /b 1
 
                         docker push %IMAGE_NAME%:%BUILD_NUMBER%
@@ -60,8 +56,6 @@ pipeline {
 
                         docker push %IMAGE_NAME%:latest
                         if errorlevel 1 exit /b 1
-
-                        docker logout
                     '''
                 }
             }
@@ -73,7 +67,7 @@ pipeline {
             echo 'Pipeline successful: image scanned and pushed to Docker Hub.'
         }
         failure {
-            echo 'Pipeline failed.  Review the console output.'
+            echo 'Pipeline failed. Review the console output.'
         }
         always {
             echo 'Pipeline execution completed.'
